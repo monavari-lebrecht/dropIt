@@ -10,7 +10,7 @@ var upload  = multer({
       callback(null, file.fieldname + '-' + Date.now());
     }
   })
-}).single('userPhoto');
+}).single('file');
 
 app.use(express.static('dist'));
 
@@ -23,6 +23,7 @@ app.all('/*', function (req, res, next) {
 app.post('/api/upload', function (req, res) {
   upload(req, res, function (err) {
     if (err) {
+      res.status(500);
       return res.end("Error uploading file.");
     }
     res.end("File is uploaded");
