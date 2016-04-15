@@ -14,7 +14,7 @@ angular.module('letItDropApp')
      * handles errors on uploading files with dropzone
      */
     this.dzError = function () {
-      debugger;
+
     };
 
     /**
