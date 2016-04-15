@@ -1,0 +1,9 @@
+<form class="dropzone"
+      method="post"
+      action="upload.php"
+      enctype="multipart/form-data"
+      ng-dropzone
+      dropzone="ctrl.dropzone"
+      dropzone-config="{'parallelUploads': 3, 'maxFileSize': 30}"
+      event-handlers="{ 'addedfile': ctrl.dzAddedFile, 'error': ctrl.dzError}">
+</form>
