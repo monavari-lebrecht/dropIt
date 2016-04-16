@@ -30,6 +30,26 @@ app.post('/api/upload', function (req, res) {
   });
 });
 
+app.get('/api/login', function (req, res) {
+  if (!req.query.key) {
+    res.status(400);
+    return res.end("Missing key parameter");
+  }
+
+  var fs  = require('fs');
+  var obj = JSON.parse(fs.readFileSync('./node_server/valid_keys.json', 'utf8'));
+  var _   = require('lodash');
+
+  var isContained = _.some(obj, ['key', req.query.key]);
+
+  if(!isContained) {
+    res.status(401);
+    return res.end("Invalid key.");
+  }
+
+  return res.end("Logged in");
+});
+
 app.listen(3000, function () {
   console.log("Working on port 3000");
 });
