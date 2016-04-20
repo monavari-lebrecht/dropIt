@@ -7,7 +7,7 @@ version 0.15.1.
 
 Either:
 
-Run `npm run serve:application` to execute the grunt angular application (port 8080) and the node server component (port 3000) in parallel.
+Run `npm run serve:application` to execute the grunt angular application (port 9000) and the node server component (port 3000) in parallel.
 The grunt server implements a proxy configuration to access the server.
 
 Or:
