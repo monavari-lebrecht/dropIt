@@ -3,7 +3,7 @@
 This project is generated with [yo angular generator](https://github.com/yeoman/generator-angular)
 version 0.15.1.
 
-## Build & development
+## Development
 
 Either:
 
@@ -14,6 +14,11 @@ Or:
 
 Run `grunt` for building and `grunt serve` for previewing the angular application.
 Run `node node_server/serve.js`
+
+## Build
+
+You can build and bundle the application by running `grunt build`.
+This generates the production version of the angular application and the production version of the server application in the _dist_-folder.
 
 ## Testing
 

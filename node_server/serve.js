@@ -12,7 +12,7 @@ var upload  = multer({
   })
 }).single('file');
 
-app.use(express.static('dist'));
+app.use(express.static('app'));
 
 app.all('/*', function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
