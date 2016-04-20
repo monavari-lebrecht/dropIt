@@ -72,5 +72,5 @@ angular
 
       // expose the current location to set the current tab to active in navigation
       $rootScope.activetab = newVal;
-  });
+    });
   }]);

@@ -4,10 +4,13 @@ var app     = express();
 var upload  = multer({
   storage: multer.diskStorage({
     destination: function (req, file, callback) {
-      callback(null, './uploads');
+      var dirpath = './uploads';
+      var fs = require('fs');
+      fs.mkdir(dirpath, function () {
+        callback(null, dirpath);
+      });
     },
     filename   : function (req, file, callback) {
-      callback(null, Date.now() + '-' + file.originalname);
       callback(null, Date.now() + '-' + file.originalname);
     }
   })
