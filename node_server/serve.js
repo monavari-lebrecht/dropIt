@@ -24,15 +24,17 @@ app.use(cookieParser());
 app.all('/*', function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization,cache-control');
+
+  if(!isAuthenticated(req.cookies.key) && !isAuthenticated(req.query.key)) {
+    res.status(401);
+    res.cookie('key', '');
+    return res.end("Invalid key.");
+  }
+
   next();
 });
 
 app.post('/api/upload', function (req, res) {
-  if(!isAuthenticated(req.cookies.key)) {
-    res.status(401);
-    return res.end("Invalid key.");
-  }
-
   var upload = multer({
     storage: multer.diskStorage({
       destination: function (req, file, callback) {
@@ -58,16 +60,7 @@ app.post('/api/upload', function (req, res) {
 });
 
 app.get('/api/login', function (req, res) {
-  if (!req.query.key) {
-    res.status(400);
-    return res.end("Missing key parameter");
-  }
-
-  if (!isAuthenticated(req.query.key)) {
-    res.status(401);
-    return res.end("Invalid key.");
-  }
-
+  res.cookie('key', req.query.key);
   return res.end("Logged in");
 });
 
