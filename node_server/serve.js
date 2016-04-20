@@ -1,22 +1,25 @@
 var express = require("express");
+var cookieParser = require('cookie-parser');
 var multer  = require('multer');
 var app     = express();
-var upload  = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, callback) {
-      var dirpath = './uploads';
-      var fs = require('fs');
-      fs.mkdir(dirpath, function () {
-        callback(null, dirpath);
-      });
-    },
-    filename   : function (req, file, callback) {
-      callback(null, Date.now() + '-' + file.originalname);
-    }
-  })
-}).single('file');
+
+/**
+ * checks whether the key is valid vor authentication
+ *
+ * @param {string} key The key, that has to be present in valid_keys.json file
+ * @returns {boolean} true, if the key is valid... false, if not
+ */
+function isAuthenticated(key) {
+  var fs  = require('fs');
+  var obj = JSON.parse(fs.readFileSync('./node_server/valid_keys.json', 'utf8'));
+  var _   = require('lodash');
+
+  return _.some(obj, ['key', key]);
+}
 
 app.use(express.static('app'));
+
+app.use(cookieParser());
 
 app.all('/*', function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -25,6 +28,26 @@ app.all('/*', function (req, res, next) {
 });
 
 app.post('/api/upload', function (req, res) {
+  if(!isAuthenticated(req.cookies.key)) {
+    res.status(401);
+    return res.end("Invalid key.");
+  }
+
+  var upload = multer({
+    storage: multer.diskStorage({
+      destination: function (req, file, callback) {
+        var dirpath = './uploads';
+        var fs      = require('fs');
+        fs.mkdir(dirpath, function () {
+          callback(null, dirpath);
+        });
+      },
+      filename   : function (req, file, callback) {
+        callback(null, Date.now() + '-' + file.originalname);
+      }
+    })
+  }).single('file');
+
   upload(req, res, function (err) {
     if (err) {
       res.status(500);
@@ -40,13 +63,7 @@ app.get('/api/login', function (req, res) {
     return res.end("Missing key parameter");
   }
 
-  var fs  = require('fs');
-  var obj = JSON.parse(fs.readFileSync('./node_server/valid_keys.json', 'utf8'));
-  var _   = require('lodash');
-
-  var isContained = _.some(obj, ['key', req.query.key]);
-
-  if(!isContained) {
+  if (!isAuthenticated(req.query.key)) {
     res.status(401);
     return res.end("Invalid key.");
   }

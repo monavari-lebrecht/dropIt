@@ -48,6 +48,7 @@
     "serve:application": "npm-run-all --parallel serve:angular serve:server "
   },
   "dependencies": {
+    "cookie-parser": "^1.4.1",
     "express": "^4.13.4",
     "fs": "0.0.2",
     "lodash": "^4.11.1",
