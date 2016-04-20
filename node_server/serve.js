@@ -22,6 +22,7 @@ function isAuthenticated(key) {
 }
 
 app.use(express.static('app'));
+app.use('/uploads', express.static('uploads'));
 
 app.use(cookieParser());
 
@@ -43,7 +44,7 @@ app.all('/*', function (req, res, next) {
  * @returns {string}
  */
 function getUploadFolder() {
-  return './uploads/' + userInfo['uploadFolder'];
+  return './uploads/' + userInfo['uploadFolder'] + '/';
 }
 
 app.post('/api/upload', function (req, res) {
@@ -72,10 +73,22 @@ app.post('/api/upload', function (req, res) {
 });
 
 app.get('/api/list', function (req, res) {
-  var fs = require('fs');
+  var fs        = require('fs');
+  var fileInfos = [];
 
-  fs.readdir(getUploadFolder(), function (err, files) {
-    res.end(JSON.stringify(files));
+  var uploadFolder = getUploadFolder();
+  fs.readdir(uploadFolder, function (err, files) {
+    files.forEach(function (file) {
+      var path     = uploadFolder + file;
+      var fileInfo = fs.statSync(path);
+      fileInfos.push({
+        filename: file,
+        created : fileInfo['ctime'],
+        size    : fileInfo['size'],
+        path    : path
+      });
+    });
+    res.end(JSON.stringify(fileInfos));
   });
 });
 

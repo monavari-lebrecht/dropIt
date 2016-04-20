@@ -6,3 +6,15 @@
       dropzone="ctrl.dropzone"
       dropzone-config="{'parallelUploads': 3, 'maxFileSize': 30}">
 </form>
+<table class="table">
+  <tr>
+    <th class="col-md-1">#</th>
+    <th class="col-md-4">Thumbnail</th>
+    <th class="col-md-7">Filename</th>
+  </tr>
+  <tr ng-repeat="file in  uploadedFiles track by $index">
+    <td>{{$index}}</td>
+    <td><img src="{{file.path}}" alt="file.filename" class="img-responsive img-thumbnail"></td>
+    <td>{{file.filename}}</td>
+  </tr>
+</table>
