@@ -360,6 +360,11 @@ module.exports = function (grunt) {
           cwd   : '<%= yeoman.app %>/images',
           src   : '{,*/}*.{png,jpg,jpeg,gif}',
           dest  : '<%= yeoman.angularDist %>/images'
+        }, {
+          expand: true,
+          cwd   : 'bower_components/dropzone/downloads/images',
+          src   : '{,*/}*.{png,jpg,jpeg,gif}',
+          dest  : '<%= yeoman.angularDist %>/images'
         }]
       }
     },
