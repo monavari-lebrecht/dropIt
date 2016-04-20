@@ -3,6 +3,8 @@ var cookieParser = require('cookie-parser');
 var multer  = require('multer');
 var app     = express();
 
+var userInfo;
+
 /**
  * checks whether the key is valid vor authentication
  *
@@ -14,7 +16,9 @@ function isAuthenticated(key) {
   var obj = JSON.parse(fs.readFileSync('./node_server/valid_keys.json', 'utf8'));
   var _   = require('lodash');
 
-  return _.some(obj, ['key', key]);
+  userInfo = _.find(obj, ['key', key]);
+
+  return userInfo ? true : false;
 }
 
 app.use(express.static('app'));
@@ -38,9 +42,10 @@ app.post('/api/upload', function (req, res) {
   var upload = multer({
     storage: multer.diskStorage({
       destination: function (req, file, callback) {
-        var dirpath = './uploads';
+        var mkdirp = require('mkdirp');
+        var dirpath = './uploads/' + userInfo['uploadFolder'];
         var fs      = require('fs');
-        fs.mkdir(dirpath, function () {
+        mkdirp(dirpath, function () {
           callback(null, dirpath);
         });
       },
