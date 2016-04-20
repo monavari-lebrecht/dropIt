@@ -33,6 +33,7 @@
     "karma": "^0.13.22",
     "karma-jasmine": "^0.3.8",
     "karma-phantomjs-launcher": "^1.0.0",
+    "npm-run-all": "^1.7.0",
     "phantomjs-prebuilt": "^2.1.7",
     "time-grunt": "^1.0.0"
   },
@@ -40,7 +41,10 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "karma start test/karma.conf.js"
+    "test": "karma start test/karma.conf.js",
+    "serve:server": "node node_server/serve.js",
+    "serve:angular": "grunt serve",
+    "serve:application": "npm-run-all --parallel serve:angular serve:server "
   },
   "dependencies": {
     "express": "^4.13.4",
