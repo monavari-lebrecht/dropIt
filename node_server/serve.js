@@ -78,16 +78,18 @@ app.get('/api/list', function (req, res) {
 
   var uploadFolder = getUploadFolder();
   fs.readdir(uploadFolder, function (err, files) {
-    files.forEach(function (file) {
-      var path     = uploadFolder + file;
-      var fileInfo = fs.statSync(path);
-      fileInfos.push({
-        filename: file,
-        created : fileInfo['ctime'],
-        size    : fileInfo['size'],
-        path    : path
+    if (files) {
+      files.forEach(function (file) {
+        var path     = uploadFolder + file;
+        var fileInfo = fs.statSync(path);
+        fileInfos.push({
+          filename: file,
+          created : fileInfo['ctime'],
+          size    : fileInfo['size'],
+          path    : path
+        });
       });
-    });
+    } 
     res.end(JSON.stringify(fileInfos));
   });
 });
