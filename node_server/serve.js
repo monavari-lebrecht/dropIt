@@ -1,7 +1,7 @@
-var express = require("express");
+var express      = require("express");
 var cookieParser = require('cookie-parser');
-var multer  = require('multer');
-var app     = express();
+var multer       = require('multer');
+var app          = express();
 
 var userInfo;
 
@@ -29,7 +29,7 @@ app.all('/*', function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization,cache-control');
 
-  if(!isAuthenticated(req.cookies.key) && !isAuthenticated(req.query.key)) {
+  if (!isAuthenticated(req.cookies.key) && !isAuthenticated(req.query.key)) {
     res.status(401);
     res.cookie('key', '');
     return res.end("Invalid key.");
@@ -38,13 +38,20 @@ app.all('/*', function (req, res, next) {
   next();
 });
 
+/**
+ * returns upload folder for current user
+ * @returns {string}
+ */
+function getUploadFolder() {
+  return './uploads/' + userInfo['uploadFolder'];
+}
+
 app.post('/api/upload', function (req, res) {
   var upload = multer({
     storage: multer.diskStorage({
       destination: function (req, file, callback) {
-        var mkdirp = require('mkdirp');
-        var dirpath = './uploads/' + userInfo['uploadFolder'];
-        var fs      = require('fs');
+        var mkdirp  = require('mkdirp');
+        var dirpath = getUploadFolder();
         mkdirp(dirpath, function () {
           callback(null, dirpath);
         });
@@ -61,6 +68,14 @@ app.post('/api/upload', function (req, res) {
       return res.end("Error uploading file.");
     }
     res.end("File is uploaded");
+  });
+});
+
+app.get('/api/list', function (req, res) {
+  var fs = require('fs');
+
+  fs.readdir(getUploadFolder(), function (err, files) {
+    res.end(JSON.stringify(files));
   });
 });
 
