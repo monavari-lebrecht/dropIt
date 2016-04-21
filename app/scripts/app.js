@@ -65,7 +65,6 @@ angular
             key: key
           }
         }).catch(function () {
-          $cookies.remove('key');
           openLoginDialog();
         });
       }

@@ -1,4 +1,5 @@
 [{
   "key": "mysecretkey",
-  "username": "Manfred Mustermann"
+  "username": "Manfred Mustermann",
+  "uploadFolder": "ManfredMustermannsFolder"
 }]

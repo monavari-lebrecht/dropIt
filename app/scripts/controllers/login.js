@@ -1,4 +1,4 @@
-angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
+angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', function ($scope, $http) {
   var _this = this;
 
   /**
@@ -13,7 +13,6 @@ angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', '$coo
           key: login.key
         }
       }).then(function () {
-        $cookies.put('key', login.key);
         $scope.$close();
       }).catch(function () {
         alert('Wrong key!');

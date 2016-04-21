@@ -1,7 +1,9 @@
-var express = require("express");
+var express      = require("express");
 var cookieParser = require('cookie-parser');
-var multer  = require('multer');
-var app     = express();
+var multer       = require('multer');
+var app          = express();
+
+var userInfo;
 
 /**
  * checks whether the key is valid vor authentication
@@ -14,31 +16,44 @@ function isAuthenticated(key) {
   var obj = JSON.parse(fs.readFileSync('./node_server/valid_keys.json', 'utf8'));
   var _   = require('lodash');
 
-  return _.some(obj, ['key', key]);
+  userInfo = _.find(obj, ['key', key]);
+
+  return userInfo ? true : false;
 }
 
 app.use(express.static('app'));
+app.use('/uploads', express.static('uploads'));
 
 app.use(cookieParser());
 
 app.all('/*', function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization,cache-control');
-  next();
-});
 
-app.post('/api/upload', function (req, res) {
-  if(!isAuthenticated(req.cookies.key)) {
+  if (!isAuthenticated(req.cookies.key) && !isAuthenticated(req.query.key)) {
     res.status(401);
+    res.cookie('key', '');
     return res.end("Invalid key.");
   }
 
+  next();
+});
+
+/**
+ * returns upload folder for current user
+ * @returns {string}
+ */
+function getUploadFolder() {
+  return './uploads/' + userInfo['uploadFolder'] + '/';
+}
+
+app.post('/api/upload', function (req, res) {
   var upload = multer({
     storage: multer.diskStorage({
       destination: function (req, file, callback) {
-        var dirpath = './uploads';
-        var fs      = require('fs');
-        fs.mkdir(dirpath, function () {
+        var mkdirp  = require('mkdirp');
+        var dirpath = getUploadFolder();
+        mkdirp(dirpath, function () {
           callback(null, dirpath);
         });
       },
@@ -57,17 +72,30 @@ app.post('/api/upload', function (req, res) {
   });
 });
 
+app.get('/api/list', function (req, res) {
+  var fs        = require('fs');
+  var fileInfos = [];
+
+  var uploadFolder = getUploadFolder();
+  fs.readdir(uploadFolder, function (err, files) {
+    if (files) {
+      files.forEach(function (file) {
+        var path     = uploadFolder + file;
+        var fileInfo = fs.statSync(path);
+        fileInfos.push({
+          filename: file,
+          created : fileInfo['ctime'],
+          size    : fileInfo['size'],
+          path    : path
+        });
+      });
+    } 
+    res.end(JSON.stringify(fileInfos));
+  });
+});
+
 app.get('/api/login', function (req, res) {
-  if (!req.query.key) {
-    res.status(400);
-    return res.end("Missing key parameter");
-  }
-
-  if (!isAuthenticated(req.query.key)) {
-    res.status(401);
-    return res.end("Invalid key.");
-  }
-
+  res.cookie('key', req.query.key);
   return res.end("Logged in");
 });
 
