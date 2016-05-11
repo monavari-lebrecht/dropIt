@@ -1,5 +1,7 @@
-var frisby = require('frisby');
-var assert = require('assert');
+var frisby   = require('frisby');
+var FormData = require('form-data');
+fs           = require('fs');
+path         = require('path');
 
 frisby.create('api/create should create a new dropzone and return a valid dropzone id. ' +
     'The key should be set as cookie and returned within a json object')
@@ -15,18 +17,46 @@ frisby.create('api/create should create a new dropzone and return a valid dropzo
   })
   .toss();
 
-frisby.create('api/dropzone/listFiles for a newly created dropzone should be valid and return an empty array')
+frisby.create('api/dropzone/id/listFiles for a newly created dropzone should be valid and return an empty array')
   .get('http://localhost:3000/api/dropzone/create')
   .after(function (error, response, body) {
     var key = JSON.parse(body).key;
-    frisby.create('api/dropzone/listFiles for a newly created dropzone should be valid and return an empty array')
+    frisby.create('api/dropzone/id/listFiles for a newly created dropzone should be valid and return an empty array')
       .get('http://localhost:3000/api/dropzone/' + key + '/listFiles')
       .expectStatus(200)
       .toss();
   })
   .toss();
 
-frisby.create('A dropzone list with a invalid key parameter should fail')
+frisby.create('A dropzone listing with an invalid key parameter should fail')
   .get('http://localhost:3000/api/dropzone/some-invalid-id/listFiles')
-  .expectStatus(401)
+  .expectStatus(404)
+  .toss();
+
+frisby.create('api/dropzone/id/upload should upload a file')
+  .get('http://localhost:3000/api/dropzone/create')
+  .after(function (error, response, body) {
+    var key = JSON.parse(body).key;
+
+    var contentPath = path.resolve(__dirname, '../resources/500.png');
+
+    var form = new FormData();
+    form.append('file', fs.createReadStream(contentPath), {
+      knownLength: fs.statSync(contentPath).size
+    });
+
+    frisby.create('api/dropzone/id/upload should upload a file')
+      .post('http://localhost:3000/api/dropzone/' + key + '/upload', form, {
+        'headers': {
+          'content-type'  : 'multipart/form-data; boundary=' + form.getBoundary(),
+          'content-length': form.getLengthSync()
+        }
+      })
+      .expectStatus(201)
+      .after(function (error, response, body) {
+        var exists = fs.existsSync('./uploads/' + key + '/' + JSON.parse(body).filename);
+        expect(exists).toBeTruthy();
+      })
+      .toss();
+  })
   .toss();

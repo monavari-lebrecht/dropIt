@@ -7,8 +7,7 @@ var _                  = require('lodash');
 var uuid               = require('node-uuid');
 var database           = new (require('tingodb')()).Db('node_server/database', {});
 var dropZoneCollection = database.collection("dropZones");
-
-var userInfo;
+var mkdirp             = require('mkdirp');
 
 app.use(express.static('app'));
 app.use('/uploads', express.static('uploads'));
@@ -30,12 +29,42 @@ app.get('/api/dropZone/create', function (req, res) {
 
 app.get('/api/dropZone/:dropZoneId/listFiles', function (req, res) {
   if (!!!req.dropZone) {
-    res.status(401);
+    res.status(404);
     res.end();
   } else {
     res.status(200);
     res.end('[]');
   }
+});
+
+app.post('/api/dropZone/:dropZoneId/upload', function (req, res, next) {
+  var filename;
+  var upload = multer({
+    storage: multer.diskStorage({
+      destination: function (req, file, callback) {
+        const dirPath = './uploads/' + req.dropZone.key + '/';
+        mkdirp(dirPath, function () {
+          callback(null, dirPath);
+        });
+      },
+      filename   : function (req, file, callback) {
+        filename = Date.now() + '-' + file.originalname;
+        callback(null, filename);
+      }
+    })
+  }).single('file');
+
+  upload(req, res, function (err) {
+    if (err) {
+      res.status(500);
+      return res.end("Error uploading file.");
+    }
+    res.status(201);
+    res.end(JSON.stringify({
+      'status'  : 'OK',
+      'filename': filename
+    }));
+  });
 });
 
 app.param('dropZoneId', function (req, res, next, id) {
