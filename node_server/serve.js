@@ -19,7 +19,8 @@ app.get('/api/dropZone/create', function (req, res) {
   const key = uuid.v1();
 
   dropZoneCollection.insert({
-    key: key
+    key      : key,
+    fileCount: 0
   });
   // send it also in json response
   res.send(JSON.stringify({
@@ -59,12 +60,28 @@ app.post('/api/dropZone/:dropZoneId/upload', function (req, res, next) {
       res.status(500);
       return res.end("Error uploading file.");
     }
+
+    // save uploaded file to database
+    req.dropZone.fileCount++;
+    dropZoneCollection.update({key: req.dropZone.key}, req.dropZone);
+
+    // send correct status and json response
     res.status(201);
     res.end(JSON.stringify({
       'status'  : 'OK',
       'filename': filename
     }));
   });
+});
+
+app.get('/api/dropZone/:dropZoneId', function (req, res, next) {
+  if (!!!req.dropZone) {
+    res.status(404);
+    res.end();
+  } else {
+    res.status(200);
+    res.end(JSON.stringify(req.dropZone));
+  }
 });
 
 app.param('dropZoneId', function (req, res, next, id) {
