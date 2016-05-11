@@ -67,6 +67,28 @@ frisby.create('A dropZone listing with an invalid key parameter should fail')
   .expectStatus(404)
   .toss();
 
+frisby.create('/api/dropZone/some-valid-id should return some infos about the dropZone')
+  .get('http://localhost:3000/api/dropZone/create')
+  .after(function (error, response, body) {
+    var key = JSON.parse(body).key;
+    uploadFileToDropZone(key, function () {
+      frisby.create('/api/dropZone/some-valid-id should return some infos about the dropZone')
+        .get('http://localhost:3000/api/dropZone/' + key)
+        .expectStatus(200)
+        .expectJSONTypes({
+          'fileCount': Number,
+          'files'    : Array
+        })
+        .expectJSON({
+          'fileCount': 1
+        })
+        .afterJSON(function (json) {
+          expect(json.files.length).toEqual(1);
+        })
+        .toss();
+    });
+  })
+  .toss();
 
 frisby.create('api/dropZone/id/upload should upload a file')
   .get('http://localhost:3000/api/dropZone/create')

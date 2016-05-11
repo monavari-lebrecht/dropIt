@@ -20,7 +20,8 @@ app.get('/api/dropZone/create', function (req, res) {
 
   dropZoneCollection.insert({
     key      : key,
-    fileCount: 0
+    fileCount: 0,
+    files    : []
   });
   // send it also in json response
   res.send(JSON.stringify({
@@ -37,6 +38,17 @@ app.get('/api/dropZone/:dropZoneId/listFiles', function (req, res) {
     res.end('[]');
   }
 });
+
+/**
+ * saves drop zone in request
+ * @param dropZone
+ */
+function saveDropZone(dropZone) {
+  dropZoneCollection.update({key: dropZone.key},
+    {
+      $set: dropZone
+    });
+}
 
 app.post('/api/dropZone/:dropZoneId/upload', function (req, res, next) {
   var filename;
@@ -63,7 +75,8 @@ app.post('/api/dropZone/:dropZoneId/upload', function (req, res, next) {
 
     // save uploaded file to database
     req.dropZone.fileCount++;
-    dropZoneCollection.update({key: req.dropZone.key}, req.dropZone);
+    req.dropZone.files.push({test:'test'})
+    saveDropZone(req.dropZone);
 
     // send correct status and json response
     res.status(201);
