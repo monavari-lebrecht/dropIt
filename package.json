@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "cookie-parser": "^1.4.1",
+    "easyimage": "^2.1.0",
     "express": "^4.13.4",
     "fs": "0.0.2",
     "lodash": "^4.11.1",

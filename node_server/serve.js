@@ -52,38 +52,56 @@ function saveDropZone(dropZone) {
 
 app.post('/api/dropZone/:dropZoneId/upload', function (req, res, next) {
   var filename;
+  var fileOriginalName;
+  const dirPath = './uploads/' + req.dropZone.key + '/';
   var upload = multer({
     storage: multer.diskStorage({
       destination: function (req, file, callback) {
-        const dirPath = './uploads/' + req.dropZone.key + '/';
         mkdirp(dirPath, function () {
           callback(null, dirPath);
         });
       },
       filename   : function (req, file, callback) {
-        filename = Date.now() + '-' + file.originalname;
+        fileOriginalName = file.originalname;
+        const fileName   = Date.now() + '-' + fileOriginalName;
+        filename         = fileName;
         callback(null, filename);
       }
     })
   }).single('file');
 
+  // store file from request
   upload(req, res, function (err) {
     if (err) {
       res.status(500);
       return res.end("Error uploading file.");
     }
 
-    // save uploaded file to database
-    req.dropZone.fileCount++;
-    req.dropZone.files.push({test:'test'})
-    saveDropZone(req.dropZone);
+    // generate thumbnail
+    var easyimg   = require('easyimage');
+    var thumbnail = dirPath + 'thumbnail-' + filename;
+    easyimg.thumbnail({
+      src  : dirPath + filename,
+      dst  : thumbnail,
+      width: 250
+    });
 
-    // send correct status and json response
-    res.status(201);
-    res.end(JSON.stringify({
-      'status'  : 'OK',
-      'filename': filename
-    }));
+    easyimg.info(dirPath + filename).then(function (info) {
+      // fetch some more information about the file and save then to database
+      _.merge(info, {
+        thumbnail: thumbnail
+      });
+      req.dropZone.fileCount++;
+      req.dropZone.files.push(info);
+      saveDropZone(req.dropZone);
+
+      // send correct status and json response
+      res.status(201);
+      res.end(JSON.stringify({
+        'status'  : 'OK',
+        'filename': filename
+      }));
+    });
   });
 });
 

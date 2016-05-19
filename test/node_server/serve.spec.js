@@ -1,7 +1,9 @@
 var frisby   = require('frisby');
 var FormData = require('form-data');
-fs           = require('fs');
-path         = require('path');
+var fs       = require('fs');
+var path     = require('path');
+var jasmine  = require('jasmine-core');
+
 
 ////////////////////////////////////////////
 // HELPER FUNCTIONS
@@ -79,11 +81,13 @@ frisby.create('/api/dropZone/some-valid-id should return some infos about the dr
           'fileCount': Number,
           'files'    : Array
         })
+        .expectJSONTypes('files.0', {
+          'name'     : String,
+          'path'     : String,
+          'thumbnail': String
+        })
         .expectJSON({
           'fileCount': 1
-        })
-        .afterJSON(function (json) {
-          expect(json.files.length).toEqual(1);
         })
         .toss();
     });
