@@ -115,6 +115,14 @@ app.get('/api/dropZone/:dropZoneId', function (req, res, next) {
   }
 });
 
+app.get('/api/dropZone/:dropZoneId/exists', function (req, res, next) {
+  if(req.dropZone)
+    res.status(200);
+  else
+    res.status(404);
+  res.end();
+});
+
 app.param('dropZoneId', function (req, res, next, id) {
   dropZoneCollection.findOne({key: id}, function (error, dropZone) {
     req.dropZone = dropZone;

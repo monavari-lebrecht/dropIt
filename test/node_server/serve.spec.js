@@ -105,3 +105,24 @@ frisby.create('api/dropZone/id/upload should upload a file')
     });
   })
   .toss();
+
+frisby.create('api/dropZone/id/exists should return if the key is valid')
+  .get('http://localhost:3000/api/dropZone/create')
+  .expectStatus(200)
+  .expectHeaderContains('content-type', 'application/json')
+  .expectJSONTypes({
+    key: String
+  })
+  .after(function (error, response, body) {
+    var jsonResponse = JSON.parse(body);
+    frisby.create('api/dropZone/id/exists should succeed if the key is valid')
+      .get('http://localhost:3000/api/dropZone/' + jsonResponse.key + '/exists')
+      .expectStatus(200)
+      .toss();
+  })
+  .toss();
+
+frisby.create('api/dropZone/id/exists should fail the key is invalid')
+  .get('http://localhost:3000/api/dropZone/some-invalid-id/exists')
+  .expectStatus(404)
+  .toss();
