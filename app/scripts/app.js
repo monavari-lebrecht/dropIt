@@ -56,17 +56,9 @@ angular
       }
 
       // check if a valid key is given...
-      var key = $cookies.get('key');
+      var key = $cookies.get('dropZoneKey');
       if (!key) {
         openLoginDialog();
-      } else {
-        $http.get('api/login', {
-          params: {
-            key: key
-          }
-        }).catch(function () {
-          openLoginDialog();
-        });
       }
 
       // expose the current location to set the current tab to active in navigation

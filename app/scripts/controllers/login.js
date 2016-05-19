@@ -1,22 +1,20 @@
-angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', function ($scope, $http) {
+angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
   var _this = this;
 
   /**
-   * try to log in with key
+   * function to create a new dropzone
    */
-  $scope.ok = function () {
-    var login = $scope.login;
+  $scope.create = function () {
+    $http.get('api/dropZone/create').then(function (response) {
+      $cookies.put('dropZoneKey', response.data.key);
+    });
+  };
 
-    if (login) {
-      $http.get('api/login', {
-        params: {
-          key: login.key
-        }
-      }).then(function () {
-        $scope.$close();
-      }).catch(function () {
-        alert('Wrong key!');
-      });
-    }
+  $scope.login = function () {
+    $http.get('api/dropZone/' + $scope.dropZoneKey + '/isValid').then(function () {
+      $cookies.put('dropZoneKey', $scope.dropZoneKey);
+    }).catch(function () {
+      $cookies.remove('dropZoneKey');
+    });
   }
 }]);
