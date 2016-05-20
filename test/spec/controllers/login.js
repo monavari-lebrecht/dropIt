@@ -13,15 +13,13 @@ describe('Controller: LoginCtrl', function () {
 
   beforeEach(inject(function ($injector) {
     // mock http backend
-    $httpBackend       = $injector.get('$httpBackend');
+    $httpBackend = $injector.get('$httpBackend');
 
     // add request to create a dropzone and return a "valid key"
     authRequestHandler = $httpBackend.when('GET', 'api/dropZone/create')
       .respond(201, {key: 'some-valid-new-key'});
 
     // add request to login with a "valid key"
-    $httpBackend.when('GET', 'api/login?key=some-valid-key')
-      .respond(200);
     $httpBackend.when('GET', 'api/dropZone/some-valid-key/isValid')
       .respond(200, '');
     $httpBackend.when('GET', 'api/dropZone/some-invalid-key/isValid')
@@ -29,9 +27,9 @@ describe('Controller: LoginCtrl', function () {
     $httpBackend.when('GET', 'api/dropZone/some-valid-key/listFiles')
       .respond(200, {
         filesCount: 1,
-        files: [
+        files     : [
           {
-            name:'image1',
+            name: 'image1',
             path: 'path/To/Image1.png'
           }
         ]
@@ -41,7 +39,7 @@ describe('Controller: LoginCtrl', function () {
     $httpBackend.whenGET(/views\/.*\.html/).respond(200, '');
 
     // Get hold of a scope (i.e. the root scope)
-    $rootScope      = $injector.get('$rootScope');
+    $rootScope = $injector.get('$rootScope');
 
     // get cookies
     $cookies = $injector.get('$cookies');

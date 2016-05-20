@@ -36,32 +36,20 @@ angular
         redirectTo: '/'
       });
   })
-  .run(['$rootScope', '$location', '$uibModal', '$cookies', '$http', function ($rootScope, $location, $modal, $cookies, $http) {
+  .run([
+    '$rootScope',
+    '$location',
+    'LoginService',
+    function ($rootScope, $location, login) {
+      var path = function () {
+        return $location.path();
+      };
+      $rootScope.$watch(path, function (newVal, oldVal) {
 
-    var path = function () {
-      return $location.path();
-    };
-    $rootScope.$watch(path, function (newVal, oldVal) {
-      /**
-       * opens a login dialog with corresponding controller
-       */
-      function openLoginDialog() {
-        $modal.open({
-          templateUrl : 'views/login.html',
-          controller  : 'LoginCtrl',
-          controllerAs: 'ctrl',
-          keyboard    : false,
-          backdrop    : 'static'
-        });
-      }
+        // run login service to check the login status
+        login.checkDropZoneStatus();
 
-      // check if a valid key is given...
-      var key = $cookies.get('dropZoneKey');
-      if (!key) {
-        openLoginDialog();
-      }
-
-      // expose the current location to set the current tab to active in navigation
-      $rootScope.activetab = newVal;
-    });
-  }]);
+        // expose the current location to set the current tab to active in navigation
+        $rootScope.activetab = newVal;
+      });
+    }]);
