@@ -20,9 +20,9 @@ describe('Controller: LoginCtrl', function () {
       .respond(201, {key: 'some-valid-new-key'});
 
     // add request to login with a "valid key"
-    $httpBackend.when('GET', 'api/dropZone/some-valid-key/isValid')
+    $httpBackend.when('GET', 'api/dropZone/some-valid-key/exists')
       .respond(200, '');
-    $httpBackend.when('GET', 'api/dropZone/some-invalid-key/isValid')
+    $httpBackend.when('GET', 'api/dropZone/some-invalid-key/exists')
       .respond(404, '');
     $httpBackend.when('GET', 'api/dropZone/some-valid-key/listFiles')
       .respond(200, {
@@ -72,14 +72,14 @@ describe('Controller: LoginCtrl', function () {
     createController();
 
     // Test a valid key
-    $httpBackend.expectGET('api/dropZone/some-valid-key/isValid');
+    $httpBackend.expectGET('api/dropZone/some-valid-key/exists');
     $rootScope.dropZoneKey = 'some-valid-key';
     $rootScope.login();
     $httpBackend.flush();
     // a corresponding cookie should be set
     expect($cookies.get('dropZoneKey')).toEqual('some-valid-key');
 
-    $httpBackend.expectGET('api/dropZone/some-invalid-key/isValid');
+    $httpBackend.expectGET('api/dropZone/some-invalid-key/exists');
     // Test an invalid key
     $rootScope.dropZoneKey = 'some-invalid-key';
     $rootScope.login();

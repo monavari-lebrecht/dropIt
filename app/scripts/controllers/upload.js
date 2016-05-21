@@ -8,8 +8,16 @@
  * Controller of the letItDropApp
  */
 angular.module('letItDropApp')
-  .controller('UploadCtrl', ['$scope', '$http', function ($scope, $http) {
-    $http.get('api/list').then(function (res) {
-      $scope.uploadedFiles = res.data;
+  .controller('UploadCtrl', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
+    var dropZoneKey = $cookies.get('dropZoneKey');
+
+    $scope.dropZoneConfig = {
+      'parallelUploads': 3,
+      'maxFileSize'    : 30,
+      'url'            : '/api/dropZone/' + dropZoneKey + '/upload'
+    };
+
+    $http.get('api/dropZone/' + dropZoneKey).then(function (res) {
+      $scope.dropZone = res.data;
     })
   }]);
