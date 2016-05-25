@@ -9,15 +9,20 @@
  */
 angular.module('letItDropApp')
   .controller('UploadCtrl', ['$scope', '$http', 'LoginService', function ($scope, $http, loginService) {
-    var dropZoneKey = loginService.get('dropZoneKey');
+    var dropZoneKey = loginService.getDropZoneKey();
 
-    $scope.dropZoneConfig = {
-      'parallelUploads': 3,
-      'maxFileSize'    : 30,
-      'url'            : '/api/dropZone/' + dropZoneKey + '/upload'
-    };
+    // run login service to check the login status
+    loginService.checkDropZoneStatus();
 
-    $http.get('api/dropZone/' + dropZoneKey).then(function (res) {
-      $scope.dropZone = res.data;
-    })
+    if (dropZoneKey) {
+      $scope.dropZoneConfig = {
+        'parallelUploads': 3,
+        'maxFileSize'    : 30,
+        'url'            : '/api/dropZone/' + dropZoneKey + '/upload'
+      };
+
+      $http.get('api/dropZone/' + dropZoneKey).then(function (res) {
+        $scope.dropZone = res.data;
+      });
+    }
   }]);

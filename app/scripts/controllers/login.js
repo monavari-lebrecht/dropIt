@@ -1,7 +1,6 @@
 angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', 'LoginService', function ($scope, $http, loginService) {
   var _this = this;
 
-  $scope.dropZoneKey = '';
   $scope.wrongKey = false;
 
   /**
@@ -9,8 +8,8 @@ angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', 'Logi
    */
   $scope.create = function () {
     $http.get('api/dropZone/create').then(function (response) {
-      loginService.setDropZoneKey(response.data.key);
       loginService.closeModal();
+      loginService.setDropZoneKey(response.data.key);
     });
   };
 
@@ -18,14 +17,16 @@ angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', 'Logi
    * check whether the key exists and perform login process, if so...
    */
   $scope.login = function () {
-    $http.get('api/dropZone/' + $scope.dropZoneKey + '/exists').then(function () {
-      loginService.setDropZoneKey($scope.dropZoneKey);
-      $scope.wrongKey = false;
-      loginService.closeModal();
-    }).catch(function () {
-      // show hint about the wrong key
-      loginService.setDropZoneKey(undefined);
-      $scope.wrongKey = true;
-    });
+    if($scope.dropZoneKey) {
+      $http.get('api/dropZone/' + $scope.dropZoneKey + '/exists').then(function () {
+        loginService.setDropZoneKey($scope.dropZoneKey);
+        $scope.wrongKey = false;
+        loginService.closeModal();
+      }).catch(function () {
+        // show hint about the wrong key
+        loginService.setDropZoneKey(undefined);
+        $scope.wrongKey = true;
+      });
+    }
   }
 }]);

@@ -8,6 +8,7 @@ describe('Controller: LoginCtrl', function () {
   var $rootScope;
   var $cookies;
   var loginService;
+  var $location;
 
   // load the controller's module
   beforeEach(module('letItDropApp'));
@@ -45,6 +46,10 @@ describe('Controller: LoginCtrl', function () {
     // get cookies
     $cookies = $injector.get('$cookies');
 
+    // get router
+    $location = $injector.get('$location');
+
+    // the login service
     loginService = $injector.get('LoginService');
 
     // The $controller service is used to create instances of controllers
@@ -76,6 +81,7 @@ describe('Controller: LoginCtrl', function () {
 
     // Test a valid key
     $httpBackend.expectGET('api/dropZone/some-valid-key/exists');
+    $location.path('/dropZone/some-valid-key');
     $rootScope.dropZoneKey = 'some-valid-key';
     $rootScope.login();
     $httpBackend.flush();
@@ -84,6 +90,7 @@ describe('Controller: LoginCtrl', function () {
 
     $httpBackend.expectGET('api/dropZone/some-invalid-key/exists');
     // Test an invalid key
+    $location.path('/dropZone/some-invalid-key');
     $rootScope.dropZoneKey = 'some-invalid-key';
     $rootScope.login();
     $httpBackend.flush();

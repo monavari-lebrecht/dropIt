@@ -22,7 +22,7 @@ angular
   ])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
+      .when('/dropZone', {
         templateUrl : 'views/upload.html',
         controller  : 'UploadCtrl',
         controllerAs: 'ctrl'
@@ -38,7 +38,7 @@ angular
         controllerAs: 'ctrl'
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/dropZone'
       });
   })
   .run([
@@ -50,10 +50,6 @@ angular
         return $location.path();
       };
       $rootScope.$watch(path, function (newVal, oldVal) {
-
-        // run login service to check the login status
-        login.checkDropZoneStatus();
-
         // expose the current location to set the current tab to active in navigation
         $rootScope.activetab = newVal;
       });

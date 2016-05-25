@@ -39,7 +39,7 @@
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
             <ul class="nav navbar-nav">
-              <li ng-class="{active: activetab == '/'}"><a ng-href="#/"><i class="glyphicon glyphicon-circle-arrow-up"></i> Upload</a></li>
+              <li ng-class="{active: activetab.indexOf('/dropZone') > -1}"><a ng-href="#/dropZone"><i class="glyphicon glyphicon-circle-arrow-up"></i> Upload</a></li>
               <li ng-class="{active: activetab == '/contact'}"><a ng-href="#/contact">Contact</a></li>
             </ul>
           </div>
@@ -48,7 +48,7 @@
     </div>
 
     <div class="container">
-    <div ng-view=""></div>
+    <div ng-view></div>
     </div>
 
 

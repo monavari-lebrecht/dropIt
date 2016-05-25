@@ -1,25 +1,20 @@
 angular.module('letItDropApp')
-  .service('LoginService', ['$cookies', '$uibModal', function ($cookies, $uibModal) {
+  .service('LoginService', ['$cookies', '$uibModal', '$location', '$routeParams', function ($cookies, $uibModal, $location, $routeParams) {
 
     var modal;
-    var dropZoneKey = $cookies.get('dropZoneKey');
 
     return {
-      /**
-       * returns instance of the login modal
-       * @returns {*}
-       */
-      getModal: function () {
-        return modal;
-      },
-
       /**
        * store the given drop zone key
        * @param key
        */
       setDropZoneKey: function (key) {
         $cookies.put('dropZoneKey', key);
-        dropZoneKey = key;
+        if (key) {
+          $location.path('/dropZone/' + key);
+        } else {
+          $location.path('/dropZone');
+        }
       },
 
       /**
@@ -27,7 +22,7 @@ angular.module('letItDropApp')
        * @returns {*|string}
        */
       getDropZoneKey: function () {
-        return dropZoneKey;
+        return $routeParams.dropZoneId || $cookies.get('dropZoneKey');
       },
 
       /**
@@ -44,6 +39,7 @@ angular.module('letItDropApp')
        */
       checkDropZoneStatus: function () {
         // check if a valid key is given...
+        const dropZoneKey = this.getDropZoneKey();
         if (!dropZoneKey) {
           modal = $uibModal.open({
             templateUrl : 'views/login.html',
@@ -52,6 +48,8 @@ angular.module('letItDropApp')
             keyboard    : false,
             backdrop    : 'static'
           });
+        } else {
+          this.setDropZoneKey(dropZoneKey);
         }
       }
     }
