@@ -1,22 +1,31 @@
-angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
+angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', 'LoginService', function ($scope, $http, loginService) {
   var _this = this;
 
-  /**
-   * try to log in with key
-   */
-  $scope.ok = function () {
-    var login = $scope.login;
+  $scope.wrongKey = false;
 
-    if (login) {
-      $http.get('api/login', {
-        params: {
-          key: login.key
-        }
-      }).then(function () {
-        $cookies.put('key', login.key);
-        $scope.$close();
+  /**
+   * function to create a new dropzone
+   */
+  $scope.create = function () {
+    $http.get('api/dropZone/create').then(function (response) {
+      loginService.closeModal();
+      loginService.setDropZoneKey(response.data.key);
+    });
+  };
+
+  /**
+   * check whether the key exists and perform login process, if so...
+   */
+  $scope.login = function () {
+    if($scope.dropZoneKey) {
+      $http.get('api/dropZone/' + $scope.dropZoneKey + '/exists').then(function () {
+        loginService.setDropZoneKey($scope.dropZoneKey);
+        $scope.wrongKey = false;
+        loginService.closeModal();
       }).catch(function () {
-        alert('Wrong key!');
+        // show hint about the wrong key
+        loginService.setDropZoneKey(undefined);
+        $scope.wrongKey = true;
       });
     }
   }
