@@ -7,6 +7,7 @@ describe('Controller: LoginCtrl', function () {
   var createController;
   var $rootScope;
   var $cookies;
+  var loginService;
 
   // load the controller's module
   beforeEach(module('letItDropApp'));
@@ -44,6 +45,8 @@ describe('Controller: LoginCtrl', function () {
     // get cookies
     $cookies = $injector.get('$cookies');
 
+    loginService = $injector.get('LoginService');
+
     // The $controller service is used to create instances of controllers
     var $controller = $injector.get('$controller');
 
@@ -65,7 +68,7 @@ describe('Controller: LoginCtrl', function () {
     $rootScope.create();
     $httpBackend.flush();
     // is a valid cookies set
-    expect($cookies.get('dropZoneKey')).toEqual('some-valid-new-key');
+    expect(loginService.getDropZoneKey()).toEqual('some-valid-new-key');
   });
 
   it('should be possible to login into a valid drop zone (setting a cookie, if valid, and remove the cookie if not)', function () {
@@ -77,7 +80,7 @@ describe('Controller: LoginCtrl', function () {
     $rootScope.login();
     $httpBackend.flush();
     // a corresponding cookie should be set
-    expect($cookies.get('dropZoneKey')).toEqual('some-valid-key');
+    expect(loginService.getDropZoneKey()).toEqual('some-valid-key');
 
     $httpBackend.expectGET('api/dropZone/some-invalid-key/exists');
     // Test an invalid key
@@ -86,6 +89,6 @@ describe('Controller: LoginCtrl', function () {
     $httpBackend.flush();
 
     // a corresponding cookie should be set
-    expect($cookies.get('dropZoneKey')).toEqual(undefined);
+    expect(loginService.getDropZoneKey()).toEqual(undefined);
   });
 });

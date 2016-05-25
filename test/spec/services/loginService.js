@@ -19,7 +19,7 @@ describe('Service: LoginService', function () {
     $uibModal.open = jasmine.createSpy();
     serviceUnderTest.checkDropZoneStatus();
 
-    $cookies.put('dropZoneKey', 'some-key');
+    serviceUnderTest.setDropZoneKey('some-key');
 
     serviceUnderTest.checkDropZoneStatus();
 

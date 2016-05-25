@@ -27,6 +27,11 @@ angular
         controller  : 'UploadCtrl',
         controllerAs: 'ctrl'
       })
+      .when('/dropZone/:dropZoneId', {
+        templateUrl : 'views/upload.html',
+        controller  : 'UploadCtrl',
+        controllerAs: 'ctrl'
+      })
       .when('/contact', {
         templateUrl : 'views/contact.html',
         controller  : 'ContactCtrl',

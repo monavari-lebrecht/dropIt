@@ -8,8 +8,8 @@
  * Controller of the letItDropApp
  */
 angular.module('letItDropApp')
-  .controller('UploadCtrl', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
-    var dropZoneKey = $cookies.get('dropZoneKey');
+  .controller('UploadCtrl', ['$scope', '$http', 'LoginService', function ($scope, $http, loginService) {
+    var dropZoneKey = loginService.get('dropZoneKey');
 
     $scope.dropZoneConfig = {
       'parallelUploads': 3,
