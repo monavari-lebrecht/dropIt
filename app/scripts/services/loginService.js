@@ -35,14 +35,14 @@ angular.module('letItDropApp')
       },
 
       /**
-       * check if the current user is logged and show login modal if not
+       * check if the current user is logged and show openDropZone modal if not
        */
       checkDropZoneStatus: function () {
         // check if a valid key is given...
         const dropZoneKey = this.getDropZoneKey();
         if (!dropZoneKey) {
           modal = $uibModal.open({
-            templateUrl : 'views/login.html',
+            templateUrl : 'views/openDropZone.html',
             controller  : 'LoginCtrl',
             controllerAs: 'ctrl',
             keyboard    : false,

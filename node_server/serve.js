@@ -179,7 +179,7 @@ app.param('dropZoneId', function (req, res, next, id) {
   });
 });
 
-app.post('/api/user/login', function (req, res, next) {
+app.post('/api/user/openDropZone', function (req, res, next) {
   // try to authenticate the user by searching in database for the user
   userCollection.findOne({
     username: req.body.username
@@ -192,7 +192,7 @@ app.post('/api/user/login', function (req, res, next) {
       // return the information including token as JSON
       res.json({
         success: true,
-        message: 'Successful login',
+        message: 'Successful openDropZone',
         token  : token
       });
       res.end();

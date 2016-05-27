@@ -21,7 +21,7 @@ describe('Controller: LoginCtrl', function () {
     authRequestHandler = $httpBackend.when('GET', 'api/dropZone/create')
       .respond(201, {key: 'some-valid-new-key'});
 
-    // add request to login with a "valid key"
+    // add request to openDropZone with a "valid key"
     $httpBackend.when('GET', 'api/dropZone/some-valid-key/exists')
       .respond(200, '');
     $httpBackend.when('GET', 'api/dropZone/some-invalid-key/exists')
@@ -49,7 +49,7 @@ describe('Controller: LoginCtrl', function () {
     // get router
     $location = $injector.get('$location');
 
-    // the login service
+    // the openDropZone service
     loginService = $injector.get('LoginService');
 
     // The $controller service is used to create instances of controllers
@@ -76,14 +76,14 @@ describe('Controller: LoginCtrl', function () {
     expect(loginService.getDropZoneKey()).toEqual('some-valid-new-key');
   });
 
-  it('should be possible to login into a valid drop zone (setting a cookie, if valid, and remove the cookie if not)', function () {
+  it('should be possible to openDropZone into a valid drop zone (setting a cookie, if valid, and remove the cookie if not)', function () {
     createController();
 
     // Test a valid key
     $httpBackend.expectGET('api/dropZone/some-valid-key/exists');
     $location.path('/dropZone/some-valid-key');
     $rootScope.dropZoneKey = 'some-valid-key';
-    $rootScope.login();
+    $rootScope.openDropZone();
     $httpBackend.flush();
     // a corresponding cookie should be set
     expect(loginService.getDropZoneKey()).toEqual('some-valid-key');
@@ -92,7 +92,7 @@ describe('Controller: LoginCtrl', function () {
     // Test an invalid key
     $location.path('/dropZone/some-invalid-key');
     $rootScope.dropZoneKey = 'some-invalid-key';
-    $rootScope.login();
+    $rootScope.openDropZone();
     $httpBackend.flush();
 
     // a corresponding cookie should be set

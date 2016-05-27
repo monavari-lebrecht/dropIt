@@ -4,7 +4,7 @@ describe('Module: letItDropApp', function () {
 
   beforeEach(inject());
 
-  it('should open a login modal, if no valid dropzone cookie is set', function () {
+  it('should open a openDropZone modal, if no valid dropzone cookie is set', function () {
 
   });
 });

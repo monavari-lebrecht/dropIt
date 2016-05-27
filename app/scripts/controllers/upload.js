@@ -11,7 +11,7 @@ angular.module('letItDropApp')
   .controller('UploadCtrl', ['$scope', '$http', 'LoginService', function ($scope, $http, loginService) {
     var dropZoneKey = loginService.getDropZoneKey();
 
-    // run login service to check the login status
+    // run openDropZone service to check the openDropZone status
     loginService.checkDropZoneStatus();
 
     if (dropZoneKey) {

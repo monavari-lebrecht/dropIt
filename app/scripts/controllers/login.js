@@ -14,9 +14,9 @@ angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', 'Logi
   };
 
   /**
-   * check whether the key exists and perform login process, if so...
+   * check whether the key exists and perform openDropZone process, if so...
    */
-  $scope.login = function () {
+  $scope.openDropZone = function () {
     if($scope.dropZoneKey) {
       $http.get('api/dropZone/' + $scope.dropZoneKey + '/exists').then(function () {
         loginService.setDropZoneKey($scope.dropZoneKey);
