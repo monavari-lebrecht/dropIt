@@ -13,6 +13,8 @@ describe('Service: LoginService', function () {
     serviceUnderTest = $injector.get('LoginService', {
       '$uibModal': $uibModal
     });
+
+    serviceUnderTest.setDropZoneKey(undefined);
   }));
 
   it('should open a modal if no dropZoneKey cookie could be found', function () {
@@ -20,7 +22,6 @@ describe('Service: LoginService', function () {
     serviceUnderTest.checkDropZoneStatus();
 
     serviceUnderTest.setDropZoneKey('some-key');
-
     serviceUnderTest.checkDropZoneStatus();
 
     // modal should be opened only the first time, because, there was no cookie at that time
