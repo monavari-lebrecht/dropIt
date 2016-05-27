@@ -6,6 +6,7 @@
     "path": "./uploads/"
   },
   "auth": {
-    "secret": "jwugXJna9Rmrmq9WMtyowbinX7"
+    "secret": "jwugXJna9Rmrmq9WMtyowbinX7",
+    "tokenExpiresIn": "8h"
   }
 }

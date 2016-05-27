@@ -48,7 +48,7 @@ var userCollection = database.collection("users");
 const user = {username: 'username', password: 'mypassword'};
 userCollection.insert(user);
 var token = jwt.sign(user, config.get('auth.secret'), {
-  expiresIn: '1d'
+  expiresIn: config.get('auth.tokenExpiresIn')
 });
 
 /////////////////////////////////////////////
