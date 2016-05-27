@@ -179,7 +179,7 @@ app.param('dropZoneId', function (req, res, next, id) {
   });
 });
 
-app.post('/api/user/openDropZone', function (req, res, next) {
+app.post('/api/user/requestAuthToken', function (req, res, next) {
   // try to authenticate the user by searching in database for the user
   userCollection.findOne({
     username: req.body.username

@@ -55,9 +55,9 @@ var token = jwt.sign(user, config.get('auth.secret'), {
 // TESTS
 /////////////////////////////////////////////
 
-frisby.create('api/user/openDropZone with valid data should return a valid token')
+frisby.create('api/user/requestAuthToken with valid data should return a valid token')
   .post(
-    'http://localhost:3000/api/user/openDropZone',
+    'http://localhost:3000/api/user/requestAuthToken',
     {'username': user.username, 'password': user.password}
   )
   .expectStatus(200)
@@ -72,9 +72,9 @@ frisby.create('api/user/openDropZone with valid data should return a valid token
   })
   .toss();
 
-frisby.create('api/user/openDropZone with invalid data fail')
+frisby.create('api/user/requestAuthToken with invalid data fail')
   .post(
-    'http://localhost:3000/api/user/openDropZone',
+    'http://localhost:3000/api/user/requestAuthToken',
     {'username': 'username', 'password': 'wrong-password'}
   )
   .expectStatus(401)
