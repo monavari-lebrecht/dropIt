@@ -12,7 +12,7 @@ angular.module('letItDropApp')
     var dropZoneKey = loginService.getDropZoneKey();
 
     // run openDropZone service to check the openDropZone status
-    loginService.checkDropZoneStatus();
+    loginService.openDropZone();
 
     if (dropZoneKey) {
       $scope.dropZoneConfig = {

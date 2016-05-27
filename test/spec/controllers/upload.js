@@ -29,9 +29,9 @@ describe('Controller: UploadCtrl', function () {
   });
 
   it('should check if the current drop zone exists', function () {
-    loginService.checkDropZoneStatus = jasmine.createSpy();
+    loginService.openDropZone = jasmine.createSpy();
     createController();
-    expect(loginService.checkDropZoneStatus.calls.count()).toEqual(1);
+    expect(loginService.openDropZone.calls.count()).toEqual(1);
   });
 
   it('should try to load all files from a given drop zone', function () {

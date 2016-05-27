@@ -19,10 +19,10 @@ describe('Service: LoginService', function () {
 
   it('should open a modal if no dropZoneKey cookie could be found', function () {
     $uibModal.open = jasmine.createSpy();
-    serviceUnderTest.checkDropZoneStatus();
+    serviceUnderTest.openDropZone();
 
     serviceUnderTest.setDropZoneKey('some-key');
-    serviceUnderTest.checkDropZoneStatus();
+    serviceUnderTest.openDropZone();
 
     // modal should be opened only the first time, because, there was no cookie at that time
     expect($uibModal.open.calls.count()).toEqual(1);

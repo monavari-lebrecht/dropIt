@@ -37,7 +37,7 @@ angular.module('letItDropApp')
       /**
        * check if the current user is logged and show openDropZone modal if not
        */
-      checkDropZoneStatus: function () {
+      openDropZone: function () {
         // check if a valid key is given...
         const dropZoneKey = this.getDropZoneKey();
         if (!dropZoneKey) {
