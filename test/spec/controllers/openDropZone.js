@@ -56,7 +56,7 @@ describe('Controller: LoginCtrl', function () {
     var $controller = $injector.get('$controller');
 
     createController = function () {
-      return $controller('LoginCtrl', {'$scope': $rootScope, '$cookies': $cookies});
+      return $controller('OpenDropZoneCtrl', {'$scope': $rootScope, '$cookies': $cookies});
     };
   }));
 

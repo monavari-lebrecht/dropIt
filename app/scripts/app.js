@@ -44,8 +44,7 @@ angular
   .run([
     '$rootScope',
     '$location',
-    'LoginService',
-    function ($rootScope, $location, openDropZone) {
+    function ($rootScope, $location) {
       var path = function () {
         return $location.path();
       };

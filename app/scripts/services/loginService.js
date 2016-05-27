@@ -43,7 +43,7 @@ angular.module('letItDropApp')
         if (!dropZoneKey) {
           modal = $uibModal.open({
             templateUrl : 'views/openDropZone.html',
-            controller  : 'LoginCtrl',
+            controller  : 'OpenDropZoneCtrl',
             controllerAs: 'ctrl',
             keyboard    : false,
             backdrop    : 'static'
