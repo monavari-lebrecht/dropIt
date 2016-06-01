@@ -38,8 +38,15 @@ angular.module('letItDropApp')
      * function to create a new dropzone
      */
     $scope.create = function () {
-      $http.post('api/dropZone/create').then(function (response) {
-
+      $http.post(
+        'api/dropZone/create', // url
+        {}, // post data
+        { // config
+          headers: {
+            'x-access-token': loginService.token
+          }
+        }).then(function (response) {
+        $state.to
       }).catch(function () {
         // open login modal
         loginService.login();
