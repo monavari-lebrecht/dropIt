@@ -1,32 +1,15 @@
-angular.module('letItDropApp').controller('LoginCtrl', ['$scope', '$http', 'LoginService', function ($scope, $http, loginService) {
-  var _this = this;
+angular.module('letItDropApp').controller('LoginCtrl', ['$http', '$scope', '$cookies', function ($http, $scope, $cookies) {
 
-  $scope.wrongKey = false;
-
-  /**
-   * function to create a new dropzone
-   */
-  $scope.create = function () {
-    $http.get('api/dropZone/create').then(function (response) {
-      loginService.closeModal();
-      loginService.setDropZoneKey(response.data.key);
+  $scope.login = function () {
+    $http.post('/api/user/requestAuthToken', {
+      username: $scope.username,
+      password: $scope.password
+    }).then(function (response) {
+      // store token for later usage
+      $cookies.put('token', response.data.token);
+      // close the login modal
+      $scope.$close();
     });
   };
 
-  /**
-   * check whether the key exists and perform login process, if so...
-   */
-  $scope.login = function () {
-    if($scope.dropZoneKey) {
-      $http.get('api/dropZone/' + $scope.dropZoneKey + '/exists').then(function () {
-        loginService.setDropZoneKey($scope.dropZoneKey);
-        $scope.wrongKey = false;
-        loginService.closeModal();
-      }).catch(function () {
-        // show hint about the wrong key
-        loginService.setDropZoneKey(undefined);
-        $scope.wrongKey = true;
-      });
-    }
-  }
 }]);

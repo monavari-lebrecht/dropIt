@@ -1,0 +1,13 @@
+<div class="well">
+  <p>Either enter a valid dropzone key or login and create a new DropZone</p>
+  <div class="alert alert-danger" role="alert" ng-show="wrongKey">DropZone key is invalid</div>
+  <fieldset class="form-group">
+    <input ng-model="dropZoneKey" type="text" class="form-control">
+  </fieldset>
+  <div>
+    <button class="btn btn-primary" type="button" ng-click="openDropZone()">OK</button>
+    <button class="btn" type="button" ng-click="create()">Create</button>
+  </div>
+</div>
+
+<div ui-view></div>

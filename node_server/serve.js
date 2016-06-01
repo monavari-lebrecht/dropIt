@@ -1,20 +1,69 @@
+var config             = require('config');
 var express            = require("express");
 var cookieParser       = require('cookie-parser');
+var bodyParser         = require('body-parser');
 var multer             = require('multer');
 var app                = express();
 var fs                 = require('fs');
 var _                  = require('lodash');
 var uuid               = require('node-uuid');
-var database           = new (require('tingodb')()).Db('node_server/database', {});
+var database           = new (require('tingodb')()).Db(config.get('database.path'), {});
 var dropZoneCollection = database.collection("dropZones");
+var userCollection     = database.collection("users");
 var mkdirp             = require('mkdirp');
+var jwt                = require('jsonwebtoken');
 
 app.use(express.static('app'));
-app.use('/uploads', express.static('uploads'));
+app.use(config.get('uploads.path'), express.static('uploads'));
 
+// enable cookies
 app.use(cookieParser());
 
-app.get('/api/dropZone/create', function (req, res) {
+// handle post data parsing
+app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
+
+// middleware for authentication
+app.use(function (req, res, next) {
+
+  // only proceed with authentication check, if a new drop zone shall be created
+  if (req.url !== '/api/dropZone/create') {
+    next();
+  } else {
+    // check header or url parameters or post parameters for token
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+    // decode token
+    if (token) {
+
+      // verifies secret and checks exp
+      jwt.verify(token, config.get('auth.secret'), function (err, decoded) {
+        if (err) {
+          res.status(401);
+          return res.json({success: false, message: 'Failed to authenticate token.'});
+        } else {
+          // if everything is good, save to request for use in other routes
+          req.decoded = decoded;
+          next();
+        }
+      });
+
+    } else {
+
+      // if there is no token
+      // return an error
+      return res.status(403).send({
+        success: false,
+        message: 'No token provided.'
+      });
+
+    }
+  }
+});
+
+app.post('/api/dropZone/create', function (req, res) {
   res.contentType('application/json');
   const key = uuid.v1();
 
@@ -53,8 +102,8 @@ function saveDropZone(dropZone) {
 app.post('/api/dropZone/:dropZoneId/upload', function (req, res, next) {
   var filename;
   var fileOriginalName;
-  const dirPath = './uploads/' + req.dropZone.key + '/';
-  var upload = multer({
+  const dirPath = config.get('uploads.path') + req.dropZone.key + '/';
+  var upload    = multer({
     storage: multer.diskStorage({
       destination: function (req, file, callback) {
         mkdirp(dirPath, function () {
@@ -127,6 +176,33 @@ app.param('dropZoneId', function (req, res, next, id) {
   dropZoneCollection.findOne({key: id}, function (error, dropZone) {
     req.dropZone = dropZone;
     next();
+  });
+});
+
+app.post('/api/user/requestAuthToken', function (req, res, next) {
+  // try to authenticate the user by searching in database for the user
+  userCollection.findOne({
+    username: req.body.username
+  }, function (error, user) {
+    if (user && !error && user.password === req.body.password) {
+      res.status(200);
+      var token = jwt.sign(user, config.get('auth.secret'), {
+        expiresIn: '1d'
+      });
+      // return the information including token as JSON
+      res.json({
+        success: true,
+        message: 'Successful openDropZone',
+        token  : token
+      });
+      res.end();
+    } else {
+      res.status(401);
+      res.json({
+        success: false
+      });
+      res.end();
+    }
   });
 });
 
