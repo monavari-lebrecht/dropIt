@@ -84,14 +84,14 @@ frisby.create('api/user/requestAuthToken with invalid data fail')
   .toss();
 
 frisby.create('api/dropZone/create without a valid token should fail')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
   .addHeader('x-access-token', 'invalid-token')
   .expectStatus(401)
   .toss();
 
 frisby.create('api/dropZone/create should create a new dropZone and return a valid dropZone id. ' +
     'The key should be set as cookie and returned within a json object')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
   .expectStatus(200)
   .addHeader('x-access-token', token)
   .expectHeaderContains('content-type', 'application/json')
@@ -104,7 +104,7 @@ frisby.create('api/dropZone/create should create a new dropZone and return a val
   .toss();
 
 frisby.create('api/dropZone/id/listFiles for a newly created dropZone should be valid and return an empty array')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
   .addHeader('x-access-token', token)
   .after(function (error, response, body) {
     var key = JSON.parse(body).key;
@@ -121,7 +121,7 @@ frisby.create('A dropZone listing with an invalid key parameter should fail')
   .toss();
 
 frisby.create('/api/dropZone/some-valid-id should return some infos about the dropZone')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
   .addHeader('x-access-token', token)
   .after(function (error, response, body) {
     var key = JSON.parse(body).key;
@@ -147,7 +147,7 @@ frisby.create('/api/dropZone/some-valid-id should return some infos about the dr
   .toss();
 
 frisby.create('api/dropZone/id/upload should upload a file')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
   .addHeader('x-access-token', token)
   .after(function (error, response, body) {
     var key = JSON.parse(body).key;
@@ -160,7 +160,7 @@ frisby.create('api/dropZone/id/upload should upload a file')
   .toss();
 
 frisby.create('api/dropZone/id/exists should return if the key is valid')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
   .addHeader('x-access-token', token)
   .expectStatus(200)
   .expectHeaderContains('content-type', 'application/json')

@@ -35,10 +35,15 @@ describe('Controller: LoginCtrl', function () {
       }));
 
     $scope.login();
+    $scope.$close = jasmine.createSpy();
 
     $httpBackend.expectPOST('/api/user/requestAuthToken');
     $httpBackend.flush();
 
+    // the modal should be closed
+    expect($scope.$close.calls.count()).toEqual(1);
+
+    // the valid token should be set as a cookie
     expect($cookies.get('token')).toEqual('valid-token');
   });
 });

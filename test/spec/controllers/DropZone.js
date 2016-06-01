@@ -6,6 +6,7 @@ describe('Controller: DropZoneCtrl', function () {
   var $rootScope;
   var $httpBackend;
   var $state;
+  var $cookies;
   var $stateParams;
 
   beforeEach(function () {
@@ -15,6 +16,7 @@ describe('Controller: DropZoneCtrl', function () {
       loginService = $injector.get('LoginService');
       $controller  = $injector.get('$controller');
       $rootScope   = $injector.get('$rootScope');
+      $cookies = $injector.get('$cookies');
       $state       = $injector.get('$state');
       $stateParams = $injector.get('$stateParams');
       $httpBackend = $injector.get('$httpBackend');
@@ -77,11 +79,13 @@ describe('Controller: DropZoneCtrl', function () {
 
     expect(loginService.login.calls.count()).toEqual(1);
 
-    loginService.token = 'some-valid-token';
+    $cookies.put('token', 'some-valid-token');
     $rootScope.create();
 
     $httpBackend.expectPOST('api/dropZone/create');
     $httpBackend.flush();
+
+    expect($state.current.name).toEqual('dropZone.show');
 
     expect(loginService.login.calls.count()).toEqual(1);
   });

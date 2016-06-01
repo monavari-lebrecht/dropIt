@@ -63,7 +63,7 @@ app.use(function (req, res, next) {
   }
 });
 
-app.get('/api/dropZone/create', function (req, res) {
+app.post('/api/dropZone/create', function (req, res) {
   res.contentType('application/json');
   const key = uuid.v1();
 

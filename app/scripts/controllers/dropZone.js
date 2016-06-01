@@ -8,7 +8,8 @@
  * Controller of the letItDropApp
  */
 angular.module('letItDropApp')
-  .controller('DropZoneCtrl', ['$scope', '$http', 'LoginService', '$rootScope', '$stateParams', '$state', function ($scope, $http, loginService, $rootScope, $stateParams, $state) {
+  .controller('DropZoneCtrl', ['$scope', '$http', 'LoginService', '$rootScope', '$stateParams', '$state', '$cookies',
+    function ($scope, $http, loginService, $rootScope, $stateParams, $state, $cookies) {
 
     function goToDropZone() {
       var dropZoneKey = $stateParams.dropZoneId;
@@ -43,10 +44,10 @@ angular.module('letItDropApp')
         {}, // post data
         { // config
           headers: {
-            'x-access-token': loginService.token
+            'x-access-token': $cookies.get('token')
           }
         }).then(function (response) {
-        $state.to
+        $state.go('dropZone.show', {dropZoneId: response.data.key});
       }).catch(function () {
         // open login modal
         loginService.login();

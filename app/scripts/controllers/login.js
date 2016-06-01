@@ -5,7 +5,10 @@ angular.module('letItDropApp').controller('LoginCtrl', ['$http', '$scope', '$coo
       username: $scope.username,
       password: $scope.password
     }).then(function (response) {
+      // store token for later usage
       $cookies.put('token', response.data.token);
+      // close the login modal
+      $scope.$close();
     });
   };
 
