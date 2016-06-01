@@ -1,5 +1,5 @@
 angular.module('letItDropApp')
-  .service('LoginService', ['$cookies', '$uibModal', '$location', '$stateParams', function ($cookies, $uibModal, $location, $stateParams) {
+  .service('LoginService', ['$cookies', '$uibModal', '$location', '$stateParams', '$state', function ($cookies, $uibModal, $location, $stateParams, $state) {
 
     var modal;
 
@@ -10,11 +10,7 @@ angular.module('letItDropApp')
        */
       setDropZoneKey: function (key) {
         $cookies.put('dropZoneKey', key);
-        if (key) {
-          $location.path('/dropZone/' + key);
-        } else {
-          $location.path('/dropZone');
-        }
+        $state.go('dropZone.show', {dropZoneId: key});
       },
 
       /**

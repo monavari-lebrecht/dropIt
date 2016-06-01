@@ -24,13 +24,13 @@ angular
     $stateProvider
       .state('dropZone', {
         url        : '/dropZone',
-        templateUrl: 'views/upload.html',
-        controller : 'UploadCtrl'
+        templateUrl: 'views/dropZone.html',
+        controller : 'DropZoneCtrl'
       })
       .state('dropZone.show', {
         url        : '/:dropZoneId',
-        templateUrl: 'views/upload.html',
-        controller : 'UploadCtrl'
+        templateUrl: 'views/dropZone.html',
+        controller : 'DropZoneCtrl'
       })
       .state('contact', {
         url        : '/contact',

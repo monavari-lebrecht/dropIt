@@ -1,4 +1,4 @@
-describe('Controller: UploadCtrl', function () {
+describe('Controller: DropZoneCtrl', function () {
 
   var $controller;
   var loginService;
@@ -24,7 +24,7 @@ describe('Controller: UploadCtrl', function () {
     });
 
     createController = function () {
-      return $controller('UploadCtrl', {'$scope': $rootScope});
+      return $controller('DropZoneCtrl', {'$scope': $rootScope});
     }
   });
 
