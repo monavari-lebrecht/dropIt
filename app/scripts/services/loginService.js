@@ -1,5 +1,5 @@
 angular.module('letItDropApp')
-  .service('LoginService', ['$cookies', '$uibModal', '$location', '$routeParams', function ($cookies, $uibModal, $location, $routeParams) {
+  .service('LoginService', ['$cookies', '$uibModal', '$location', '$stateParams', function ($cookies, $uibModal, $location, $stateParams) {
 
     var modal;
 
@@ -22,7 +22,7 @@ angular.module('letItDropApp')
        * @returns {*|string}
        */
       getDropZoneKey: function () {
-        return $routeParams.dropZoneId || $cookies.get('dropZoneKey');
+        return $stateParams.dropZoneId || $cookies.get('dropZoneKey');
       },
 
       /**

@@ -14,32 +14,32 @@ angular
     'ngCookies',
     'ngMessages',
     'ngResource',
-    'ngRoute',
+    'ui.router',
     'ngSanitize',
     'ngTouch',
     'ngDropzone',
     'ui.bootstrap'
   ])
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/dropZone', {
-        templateUrl : 'views/upload.html',
-        controller  : 'UploadCtrl',
-        controllerAs: 'ctrl'
+  .config(function ($stateProvider, $urlRouterProvider) {
+    $stateProvider
+      .state('dropZone', {
+        url        : '/dropZone',
+        templateUrl: 'views/upload.html',
+        controller : 'UploadCtrl'
       })
-      .when('/dropZone/:dropZoneId', {
-        templateUrl : 'views/upload.html',
-        controller  : 'UploadCtrl',
-        controllerAs: 'ctrl'
+      .state('dropZone.show', {
+        url        : '/:dropZoneId',
+        templateUrl: 'views/upload.html',
+        controller : 'UploadCtrl'
       })
-      .when('/contact', {
-        templateUrl : 'views/contact.html',
-        controller  : 'ContactCtrl',
-        controllerAs: 'ctrl'
-      })
-      .otherwise({
-        redirectTo: '/dropZone'
+      .state('contact', {
+        url        : '/contact',
+        templateUrl: 'views/contact.html',
+        controller : 'ContactCtrl'
       });
+
+    $urlRouterProvider
+      .otherwise('/dropZone');
   })
   .run([
     '$rootScope',
