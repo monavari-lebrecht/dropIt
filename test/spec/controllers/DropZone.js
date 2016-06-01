@@ -5,6 +5,8 @@ describe('Controller: DropZoneCtrl', function () {
   var createController;
   var $rootScope;
   var $httpBackend;
+  var $state;
+  var $stateParams;
 
   beforeEach(function () {
     module('letItDropApp');
@@ -14,6 +16,7 @@ describe('Controller: DropZoneCtrl', function () {
       $controller  = $injector.get('$controller');
       $rootScope   = $injector.get('$rootScope');
       $state       = $injector.get('$state');
+      $stateParams = $injector.get('$stateParams');
       $httpBackend = $injector.get('$httpBackend');
       $httpBackend.when('GET', 'api/dropZone/some-valid-key')
         .respond(200, '');
@@ -45,16 +48,36 @@ describe('Controller: DropZoneCtrl', function () {
     });
 
     createController = function () {
-      return $controller('DropZoneCtrl', {'$scope': $rootScope});
+      return $controller('DropZoneCtrl', {
+        '$scope': $rootScope,
+        '$state': $state
+      });
     }
   });
 
   it('should try to load all files from a given drop zone', function () {
-    loginService.setDropZoneKey('some-valid-key');
+    $stateParams.dropZoneId = 'some-valid-key';
+    createController();
 
     $httpBackend.expectGET('api/dropZone/some-valid-key');
-    createController();
     $httpBackend.flush();
+  });
+
+  it('should open the login dialog, if the user has no valid token or create a new drop zone if the token is valid', function () {
+    createController();
+
+    // test with invalid token
+    $httpBackend.when('POST', 'api/dropZone/create')
+      .respond(401, '');
+
+    loginService.login = jasmine.createSpy();
+
+    $rootScope.create();
+
+    $httpBackend.expectPOST('api/dropZone/create');
+    $httpBackend.flush();
+
+    expect(loginService.login.calls.count()).toEqual(1);
   });
 
   it('should be possible to create a new dropzone (a cookie should be set with that equals the one from API)', function () {
@@ -68,29 +91,6 @@ describe('Controller: DropZoneCtrl', function () {
     $httpBackend.flush();
     // is a valid cookies set
     expect(loginService.getDropZoneKey()).toEqual('some-valid-new-key');
-  });
-
-  it('should be possible to openDropZone into a valid drop zone (setting a cookie, if valid, and remove the cookie if not)', function () {
-    createController();
-
-    // Test a valid key
-    $httpBackend.expectGET('api/dropZone/some-valid-key/exists');
-    $state.go('dropZone.show', {dropZoneKey: 'some-valid-key'});
-    $rootScope.dropZoneKey = 'some-valid-key';
-    $rootScope.openDropZone();
-    $httpBackend.flush();
-    // a corresponding cookie should be set
-    expect(loginService.getDropZoneKey()).toEqual('some-valid-key');
-
-    $httpBackend.expectGET('api/dropZone/some-invalid-key/exists');
-    // Test an invalid key
-    $state.go('dropZone.show', {dropZoneKey: 'some-invalid-key'});
-    $rootScope.dropZoneKey = 'some-invalid-key';
-    $rootScope.openDropZone();
-    $httpBackend.flush();
-
-    // a corresponding cookie should be set
-    expect(loginService.getDropZoneKey()).toEqual(undefined);
   });
 
 });

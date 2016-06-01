@@ -34,6 +34,7 @@ module.exports = function (config) {
       'bower_components/angular-dropzone/lib/angular-dropzone.js',
       'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
+      'bower_components/angular-notify/dist/angular-notify.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

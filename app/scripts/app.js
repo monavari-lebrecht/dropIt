@@ -18,7 +18,8 @@ angular
     'ngSanitize',
     'ngTouch',
     'ngDropzone',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'cgNotify'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider

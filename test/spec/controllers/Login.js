@@ -24,10 +24,10 @@ describe('Controller: LoginCtrl', function () {
   }));
 
   it('should be possible to request a token by providing valid user credentials', function () {
-    var controller = createController();
+    createController();
 
     // add default response to all html files
-    $httpBackend.when('GET', '/api/user/requestAuthToken')
+    $httpBackend.when('POST', '/api/user/requestAuthToken')
       .respond(200, JSON.stringify({
         success: true,
         message: 'Successful logged in',
@@ -36,7 +36,7 @@ describe('Controller: LoginCtrl', function () {
 
     $scope.login();
 
-    $httpBackend.expectGET('/api/user/requestAuthToken');
+    $httpBackend.expectPOST('/api/user/requestAuthToken');
     $httpBackend.flush();
 
     expect($cookies.get('token')).toEqual('valid-token');

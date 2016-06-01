@@ -8,10 +8,10 @@
  * Controller of the letItDropApp
  */
 angular.module('letItDropApp')
-  .controller('DropZoneCtrl', ['$scope', '$http', 'LoginService', '$rootScope', function ($scope, $http, loginService, $rootScope) {
+  .controller('DropZoneCtrl', ['$scope', '$http', 'LoginService', '$rootScope', '$stateParams', '$state', function ($scope, $http, loginService, $rootScope, $stateParams, $state) {
 
     function goToDropZone() {
-      var dropZoneKey = loginService.getDropZoneKey();
+      var dropZoneKey = $stateParams.dropZoneId;
 
       if (dropZoneKey) {
         $scope.dropZoneConfig = {
@@ -38,8 +38,11 @@ angular.module('letItDropApp')
      * function to create a new dropzone
      */
     $scope.create = function () {
-      $http.get('api/dropZone/create').then(function (response) {
-        loginService.setDropZoneKey(response.data.key);
+      $http.post('api/dropZone/create').then(function (response) {
+
+      }).catch(function () {
+        // open login modal
+        loginService.login();
       });
     };
 
@@ -49,13 +52,9 @@ angular.module('letItDropApp')
     $scope.openDropZone = function () {
       if($scope.dropZoneKey) {
         $http.get('api/dropZone/' + $scope.dropZoneKey + '/exists').then(function () {
-          loginService.setDropZoneKey($scope.dropZoneKey);
-          $scope.wrongKey = false;
-          loginService.closeModal();
+          $state.go('dropZone.show', {dropZoneId: $scope.dropZoneKey});
         }).catch(function () {
-          // show hint about the wrong key
-          loginService.setDropZoneKey(undefined);
-          $scope.wrongKey = true;
+          // TODO: show some failure message
         });
       }
     }
