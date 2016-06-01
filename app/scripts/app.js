@@ -29,7 +29,7 @@ angular
       })
       .state('dropZone.show', {
         url        : '/:dropZoneId',
-        templateUrl: 'views/dropZone.html',
+        templateUrl: 'views/dropZone.show.html',
         controller : 'DropZoneCtrl'
       })
       .state('contact', {
