@@ -1,5 +1,4 @@
 angular.module('letItDropApp').controller('OpenDropZoneCtrl', ['$scope', '$http', 'LoginService', function ($scope, $http, loginService) {
-  var _this = this;
 
   $scope.wrongKey = false;
 
