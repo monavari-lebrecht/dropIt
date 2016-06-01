@@ -1,9 +1,10 @@
+var config   = require('config');
 var frisby   = require('frisby');
 var FormData = require('form-data');
 var fs       = require('fs');
 var path     = require('path');
 var jasmine  = require('jasmine-core');
-
+var jwt      = require('jsonwebtoken');
 
 ////////////////////////////////////////////
 // HELPER FUNCTIONS
@@ -36,25 +37,75 @@ function uploadFileToDropZone(key, after) {
 }
 
 /////////////////////////////////////////////
+// PREPARE TESTING
+/////////////////////////////////////////////
+
+// prepare database
+var database       = new (require('tingodb')()).Db(config.get('database.path'), {});
+var userCollection = database.collection("users");
+
+// create user and a valid token for authentication
+const user = {username: 'username', password: 'mypassword'};
+userCollection.insert(user);
+var token = jwt.sign(user, config.get('auth.secret'), {
+  expiresIn: config.get('auth.tokenExpiresIn')
+});
+
+/////////////////////////////////////////////
 // TESTS
 /////////////////////////////////////////////
 
-frisby.create('api/create should create a new dropZone and return a valid dropZone id. ' +
-    'The key should be set as cookie and returned within a json object')
-  .get('http://localhost:3000/api/dropZone/create')
+frisby.create('api/user/requestAuthToken with valid data should return a valid token')
+  .post(
+    'http://localhost:3000/api/user/requestAuthToken',
+    {'username': user.username, 'password': user.password}
+  )
   .expectStatus(200)
+  .expectJSON({
+    success: true
+  })
+  .expectJSONTypes({
+    token: String
+  }).afterJSON(function (response) {
+    // store token for later use
+    token = response.token;
+  })
+  .toss();
+
+frisby.create('api/user/requestAuthToken with invalid data fail')
+  .post(
+    'http://localhost:3000/api/user/requestAuthToken',
+    {'username': 'username', 'password': 'wrong-password'}
+  )
+  .expectStatus(401)
+  .expectJSON({
+    success: false
+  })
+  .toss();
+
+frisby.create('api/dropZone/create without a valid token should fail')
+  .post('http://localhost:3000/api/dropZone/create')
+  .addHeader('x-access-token', 'invalid-token')
+  .expectStatus(401)
+  .toss();
+
+frisby.create('api/dropZone/create should create a new dropZone and return a valid dropZone id. ' +
+    'The key should be set as cookie and returned within a json object')
+  .post('http://localhost:3000/api/dropZone/create')
+  .expectStatus(200)
+  .addHeader('x-access-token', token)
   .expectHeaderContains('content-type', 'application/json')
   .expectJSONTypes({
     key: String
   })
-  .after(function (error, response, body) {
-    var json = JSON.parse(body);
-    expect(json.key).not.toBeUndefined();
+  .afterJSON(function (response) {
+    expect(response.key).not.toBeUndefined();
   })
   .toss();
 
 frisby.create('api/dropZone/id/listFiles for a newly created dropZone should be valid and return an empty array')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
+  .addHeader('x-access-token', token)
   .after(function (error, response, body) {
     var key = JSON.parse(body).key;
     frisby.create('api/dropZone/id/listFiles for a newly created dropZone should be valid and return an empty array')
@@ -70,7 +121,8 @@ frisby.create('A dropZone listing with an invalid key parameter should fail')
   .toss();
 
 frisby.create('/api/dropZone/some-valid-id should return some infos about the dropZone')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
+  .addHeader('x-access-token', token)
   .after(function (error, response, body) {
     var key = JSON.parse(body).key;
     uploadFileToDropZone(key, function () {
@@ -95,19 +147,21 @@ frisby.create('/api/dropZone/some-valid-id should return some infos about the dr
   .toss();
 
 frisby.create('api/dropZone/id/upload should upload a file')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
+  .addHeader('x-access-token', token)
   .after(function (error, response, body) {
     var key = JSON.parse(body).key;
 
     uploadFileToDropZone(key, function (error, response, body) {
-      var exists = fs.existsSync('./uploads/' + key + '/' + JSON.parse(body).filename);
+      var exists = fs.existsSync(config.get('uploads.path') + key + '/' + JSON.parse(body).filename);
       expect(exists).toBeTruthy();
     });
   })
   .toss();
 
 frisby.create('api/dropZone/id/exists should return if the key is valid')
-  .get('http://localhost:3000/api/dropZone/create')
+  .post('http://localhost:3000/api/dropZone/create')
+  .addHeader('x-access-token', token)
   .expectStatus(200)
   .expectHeaderContains('content-type', 'application/json')
   .expectJSONTypes({

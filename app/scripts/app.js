@@ -14,38 +14,38 @@ angular
     'ngCookies',
     'ngMessages',
     'ngResource',
-    'ngRoute',
+    'ui.router',
     'ngSanitize',
     'ngTouch',
     'ngDropzone',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'cgNotify'
   ])
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/dropZone', {
-        templateUrl : 'views/upload.html',
-        controller  : 'UploadCtrl',
-        controllerAs: 'ctrl'
+  .config(function ($stateProvider, $urlRouterProvider) {
+    $stateProvider
+      .state('dropZone', {
+        url        : '/dropZone',
+        templateUrl: 'views/dropZone.html',
+        controller : 'DropZoneCtrl'
       })
-      .when('/dropZone/:dropZoneId', {
-        templateUrl : 'views/upload.html',
-        controller  : 'UploadCtrl',
-        controllerAs: 'ctrl'
+      .state('dropZone.show', {
+        url        : '/:dropZoneId',
+        templateUrl: 'views/dropZone.show.html',
+        controller : 'DropZoneCtrl'
       })
-      .when('/contact', {
-        templateUrl : 'views/contact.html',
-        controller  : 'ContactCtrl',
-        controllerAs: 'ctrl'
-      })
-      .otherwise({
-        redirectTo: '/dropZone'
+      .state('contact', {
+        url        : '/contact',
+        templateUrl: 'views/contact.html',
+        controller : 'ContactCtrl'
       });
+
+    $urlRouterProvider
+      .otherwise('/dropZone');
   })
   .run([
     '$rootScope',
     '$location',
-    'LoginService',
-    function ($rootScope, $location, login) {
+    function ($rootScope, $location) {
       var path = function () {
         return $location.path();
       };

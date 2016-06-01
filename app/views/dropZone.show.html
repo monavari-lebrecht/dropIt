@@ -1,0 +1,21 @@
+<div ng-if="dropZone">
+  <form class="dropzone"
+        method="post"
+        enctype="multipart/form-data"
+        ng-dropzone
+        dropzone="ctrl.dropzone"
+        dropzone-config="dropZoneConfig">
+  </form>
+  <table class="table">
+    <tr>
+      <th class="col-md-1">#</th>
+      <th class="col-md-4">Thumbnail</th>
+      <th class="col-md-7">Filename</th>
+    </tr>
+    <tr ng-repeat="file in dropZone.files track by $index">
+      <td>{{$index}}</td>
+      <td><img src="{{file.thumbnail}}" alt="file.filename" class="img-responsive img-thumbnail" /></td>
+      <td>{{file.name}}</td>
+    </tr>
+  </table>
+</div>
